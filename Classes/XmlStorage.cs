@@ -38,7 +38,9 @@ namespace zIinz_3_bigdata.Classes
         {
             if (!KnowningTypes.Contains(type))
             {
-                Console.WriteLine($"Zarejestrowano typ:{type.Name}");
+                using var log = Log.DEV("XmlStorageTypes", "Register");
+
+                log.PR_DEV($"zarejestrowano typ:{type.Name}");
 
                 KnowningTypes.Add(type);
             }
@@ -56,15 +58,23 @@ namespace zIinz_3_bigdata.Classes
         public abstract bool InitializeFromObject(T Object);
         public virtual bool FromXml(Stream Stream)
         {
+            using var log = Log.DET(this, "FromXml");
+
             DataContractSerializer oSerializer = new DataContractSerializer(typeof(T),XmlStorageTypes.GetArray());
 
             using var oReader = XmlDictionaryReader.CreateTextReader(Stream, new XmlDictionaryReaderQuotas());
 
-            return InitializeFromObject((T)oSerializer.ReadObject(oReader, false)) ;
+            var bResult = InitializeFromObject((T)oSerializer.ReadObject(oReader, false));
+
+            log.PR_DET($"Result={bResult}");
+
+            return bResult;
         }
 
         public virtual MemoryStream ToXml()
         {
+            using var log = Log.DET(this, "ToXml");
+
             DataContractSerializer oSerializer = new DataContractSerializer(typeof(T), XmlStorageTypes.GetArray());
 
             using var oStream = new MemoryStream();
