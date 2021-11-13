@@ -41,19 +41,15 @@ namespace zIinz_3_bigdata.Classes.Network
             throw new MessageFactoryTypeNotFound(a_sTypeName);
         }
 
-        public dynamic Create(string a_sTypeName) => Create<dynamic>(a_sTypeName);
-
-        public dynamic Create(NetworkData a_oNetData)
+        public IMessage Create(NetworkData a_oNetData)
         {
             if ((a_oNetData?.DataLength() ?? 0) < 1)
                 throw new NetworkDataBufferIsEmpty("Dane telegramu");
 
-            var _oByteData = a_oNetData.Buffer.Take(a_oNetData.DataLength()).ToArray();
-
-            return Create(_oByteData);
+            return Create(a_oNetData.BufferWithData);
         }
 
-        public dynamic Create(byte[] a_oData)
+        public IMessage Create(byte[] a_oData)
         {
             using var _oXmlReader = XmlReader.Create(new MemoryStream(a_oData));
 
@@ -65,7 +61,7 @@ namespace zIinz_3_bigdata.Classes.Network
 
             _oMessage.FromXml(new MemoryStream(a_oData));
 
-            return _oMessage;
+            return (IMessage)_oMessage;
         }
     }
 }

@@ -65,7 +65,7 @@ namespace zIinz_3_bigdata.Classes.Bussines.ClientServerImplementation
 
             var _client = a_oStateObj.GetObject<ClientService>();
 
-            var _message = MessageFactory.Instance.Create(_client.Data.BufferWithData) as IMessage;
+            var _message = MessageFactory.Instance.Create(_client.Data.BufferWithData);
 
             log.PR_DEB($"OnReceived::{_message}");
 

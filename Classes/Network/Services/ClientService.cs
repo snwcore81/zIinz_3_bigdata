@@ -67,5 +67,97 @@ namespace zIinz_3_bigdata.Classes.Network.Services
 
             _obj?.NetworkAction?.NetworkStateChanged(NetworkState.Error, new StateObject(this));
         }
+
+        public virtual void AsyncSend(NetworkData a_oData)
+        {
+            try
+            {
+                NetworkAction?.NetworkStateChanged(NetworkState.Sending, new StateObject(this, a_oData));
+
+                NetworkSocket?.BeginSend(a_oData.Buffer, 0, a_oData.DataLength(true), SocketFlags.None, new AsyncCallback(SendCallback), this);
+            }
+            catch (Exception)
+            {
+                NetworkAction?.NetworkStateChanged(NetworkState.Error, new StateObject(this));
+            }
+        }
+
+        public virtual void AsyncReceive()
+        {
+            Data?.Clear();
+
+            try
+            {
+                NetworkAction?.NetworkStateChanged(NetworkState.Receiving, new StateObject(this));
+
+                NetworkSocket?.BeginReceive(Data.Buffer, 0, Data.BufferLength, SocketFlags.None, new AsyncCallback(ReceiveCallback), this);
+            }
+            catch (Exception)
+            {
+                NetworkAction?.NetworkStateChanged(NetworkState.Error, new StateObject(this));
+            }
+        }
+
+        public virtual StateObject SyncReceive()
+        {
+            try
+            {
+                Data?.Clear();
+
+                NetworkSocket?.Receive(Data.Buffer, SocketFlags.None);
+
+                return new StateObject(this, Data);
+            }
+            catch (Exception)
+            {
+            }
+
+            NetworkAction?.NetworkStateChanged(NetworkState.Error);
+
+            return null;
+        }
+
+        protected virtual void SendCallback(IAsyncResult ar)
+        {
+            NetworkService _obj = ar.AsyncState as NetworkService;
+
+            try
+            {
+                if (_obj.NetworkSocket.EndSend(ar) > 0)
+                {
+                    _obj.NetworkAction?.NetworkStateChanged(NetworkState.Sent, new StateObject(this));
+
+                    return;
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            _obj.NetworkAction?.NetworkStateChanged(NetworkState.Error);
+        }
+
+        protected virtual void ReceiveCallback(IAsyncResult ar)
+        {
+            NetworkService _obj = ar.AsyncState as NetworkService;
+
+            try
+            {
+                int _iSize = _obj.NetworkSocket.EndReceive(ar);
+
+                if (_iSize > 0 && (_obj.Data?.HasAnyData ?? false))
+                {
+                    _obj.NetworkAction?.NetworkStateChanged(NetworkState.Received, new StateObject(this, Data));
+
+                    return;
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            _obj.NetworkAction?.NetworkStateChanged(NetworkState.Error, new StateObject(this));
+        }
+
     }
 }

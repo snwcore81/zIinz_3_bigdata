@@ -30,7 +30,7 @@ namespace zIinz_3_bigdata.Classes.Bussines.Messages
             {
                 var _server = _client.GetRegisteredServer<ServerService<ClientService>>();
 
-                if (_server.ConnectedClients.Find(x => x.Identifier == Login) == null)
+                if (_server.GetClientByIdentifier(Login) == null)
                 {
                     _client.Identifier = Login;
                     Response = new Response(1, "Zalogowano poprawne");

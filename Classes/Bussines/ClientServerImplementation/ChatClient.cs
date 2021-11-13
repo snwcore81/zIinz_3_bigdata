@@ -26,28 +26,13 @@ namespace zIinz_3_bigdata.Classes.Bussines.ClientServerImplementation
 
                 switch (a_eState)
                 {
-                    case NetworkState.Sending:
-                        break;
-
-                    case NetworkState.Sent:
-                        break;
-
-                    case NetworkState.Connecting:
-                        break;
-
                     case NetworkState.Connected:
                         OnConnected(a_oStateObj);
 
                         break;
 
-                    case NetworkState.Receiving:
-                        break;
-
                     case NetworkState.Received:
                         OnReceived(a_oStateObj);
-                        break;
-
-                    case NetworkState.Error:
                         break;
                 }
             }
@@ -57,7 +42,7 @@ namespace zIinz_3_bigdata.Classes.Bussines.ClientServerImplementation
         {
             var _client = a_oStateObj.GetObject<ClientService>();
 
-            var _message = MessageFactory.Instance.Create(_client.Data.BufferWithData);
+            var _message = MessageFactory.Instance.Create(_client.Data);
 
             try
             {
