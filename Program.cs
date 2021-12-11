@@ -32,17 +32,6 @@ namespace zIinz_3_bigdata
             dbSource.Connect();
 
 
-            LoginDbObject login;
-
-            try
-            {
-                login = new LoginDbObject("jacek",dbSource);
-            }
-            catch (Exception e)
-            {
-                log.PR_DEB($"Wyjątek! {e.Message}");
-            }
-
             foreach (var loginInDb in dbSource.ExecuteReader<LoginDbObject>())
             {
                 try
