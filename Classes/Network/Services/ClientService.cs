@@ -119,7 +119,7 @@ namespace zIinz_3_bigdata.Classes.Network.Services
 
         protected virtual void SendCallback(IAsyncResult ar)
         {
-            NetworkService _obj = ar.AsyncState as NetworkService;
+            ClientService _obj = ar.AsyncState as ClientService;
 
             try
             {
@@ -139,7 +139,7 @@ namespace zIinz_3_bigdata.Classes.Network.Services
 
         protected virtual void ReceiveCallback(IAsyncResult ar)
         {
-            NetworkService _obj = ar.AsyncState as NetworkService;
+            ClientService _obj = ar.AsyncState as ClientService;
 
             try
             {
